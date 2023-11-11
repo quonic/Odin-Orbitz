@@ -2,7 +2,7 @@
 
 A simple application showcasing drawing circles and text in the Odin language.
 
-Library showcased:
+Odin Library showcased:
 
 * Reading a csv file, with a little bit of error checking
 * Formating text to add variables to a string
@@ -17,10 +17,10 @@ Uses data from [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
 
 * `ESC` or `Alt+F4` to Quit
 * `-` and `+`/`=` to Zoom
-* `[` and `]` to change the Scaling of orbits and sizes of Satellite
+* `[` and `]` to change the Scaling of orbits and sizes of Planets
 * `Left Mouse + Move` to Move the view around
 * `Right Mouse` to Reset the position and zoom back to defaults
-* `0 to 9` Centers on Satellites. 0 = Sun, 3 = Earth. Toggle with `Space Bar`
+* `0 to 9` Centers on a planet. 0 = Sun, 3 = Earth. Toggle with `Space Bar`
 
 ## Setup and Run
 
