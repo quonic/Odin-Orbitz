@@ -15,12 +15,12 @@ Uses data from [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
 
 ## Keys
 
-`ESC` or `Alt+F4` to Quit
-`-` and `+`/`=` to Zoom
-`[` and `]` to change the Scaling of orbits and sizes of Satellite
-`Left Mouse + Move` to Move the view around
-`Right Mouse` to Reset the position and zoom back to defaults
-`0 to 9` Centers on Satellites. 0 = Sun, 3 = Earth. Toggle with `Space Bar`
+* `ESC` or `Alt+F4` to Quit
+* `-` and `+`/`=` to Zoom
+* `[` and `]` to change the Scaling of orbits and sizes of Satellite
+* `Left Mouse + Move` to Move the view around
+* `Right Mouse` to Reset the position and zoom back to defaults
+* `0 to 9` Centers on Satellites. 0 = Sun, 3 = Earth. Toggle with `Space Bar`
 
 ## Setup and Run
 
