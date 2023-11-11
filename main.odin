@@ -239,15 +239,19 @@ main :: proc() {
 }
 
 
-drawPlanet :: proc(b: Satellite, v: rl.Vector2) {
-	r: f32 = b.Diameter / 2 / Zoom * BodyScale
+drawPlanet :: proc(body: Satellite, vector: rl.Vector2) {
+	// Calculate the radius, accounting for Zoom and BodyScale
+	r: f32 = body.Diameter / 2 / Zoom * BodyScale
+	// Make sure the radius isn't 0 or less than 0.
 	if (r < 1) {r = 1}
-	rl.DrawCircle(cast(i32)(b.Vector[0] + v[0]), cast(i32)(b.Vector[1] + v[1]), r, b.Color)
+	// Draw the planet
+	rl.DrawCircle(cast(i32)(body.Vector[0] + vector[0]), cast(i32)(body.Vector[1] + vector[1]), r, body.Color)
 
+	// Draw the name of the planet next to the circle
 	rl.DrawText(
-		fmt.ctprintf("%v", b.Name),
-		i32(b.Vector[0] + v[0]+10+r),
-		i32(b.Vector[1] + v[1]-10),
+		fmt.ctprintf("%v", body.Name),
+		i32(body.Vector[0] + vector[0]+10+r),
+		i32(body.Vector[1] + vector[1]-10),
 		20,
 		rl.GREEN,
 	)
