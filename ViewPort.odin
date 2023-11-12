@@ -8,8 +8,10 @@ ViewPort :: struct {
 }
 
 initViewPort :: proc(Width: i32, Height: i32) -> ViewPort {
-    return {
-        Position={cast(f32)Width / 2, cast(f32)Height / 2},
-        Center={cast(f32)Width / 2, cast(f32)Height / 2}
-    }
+	return(
+		{
+			Position = {cast(f32)Width / 2, cast(f32)Height / 2},
+			Center = {cast(f32)Width / 2, cast(f32)Height / 2},
+		}
+	)
 }

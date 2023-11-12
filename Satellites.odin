@@ -1,12 +1,12 @@
 package main
 
-import "vendor:raylib"
 import "core:encoding/csv"
-import "core:os"
-import "core:io"
-import "core:strings"
-import "core:strconv"
 import "core:fmt"
+import "core:io"
+import "core:os"
+import "core:strconv"
+import "core:strings"
+import "vendor:raylib"
 
 Satellite :: struct {
 	Name:                string,
@@ -34,7 +34,7 @@ Satellite :: struct {
 Planets: [dynamic]Satellite
 
 loadPlanets :: proc(path: string) {
-// Read our CSV file
+	// Read our CSV file
 	data, ok := os.read_entire_file(path)
 	defer delete(data)
 	readCsv: csv.Reader
@@ -79,9 +79,9 @@ loadPlanets :: proc(path: string) {
 		orbitaleccentricity, _ := strconv.parse_f32(PlanetData[14])
 		obliquitytoorbit, _ := strconv.parse_f32(PlanetData[15])
 		orbiting, _ := strconv.parse_f32(PlanetData[16])
-		red,_:=strconv.parse_f32(PlanetData[17])
-		green,_:=strconv.parse_f32(PlanetData[18])
-		blue,_:=strconv.parse_f32(PlanetData[19])
+		red, _ := strconv.parse_f32(PlanetData[17])
+		green, _ := strconv.parse_f32(PlanetData[18])
+		blue, _ := strconv.parse_f32(PlanetData[19])
 
 		// Build our current Planet
 		Planet: Satellite = {
@@ -104,7 +104,7 @@ loadPlanets :: proc(path: string) {
 			Orbiting = i32(orbiting),
 			Vector = {distancefromsun, 0},
 			Angle = 0,
-			Color=raylib.Color{u8(red),u8(green),u8(blue),255}
+			Color = raylib.Color{u8(red), u8(green), u8(blue), 255},
 		}
 		// Add our current planet to our Planets array
 		append(&Planets, Planet)

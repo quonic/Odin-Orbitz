@@ -32,7 +32,6 @@ sunTexture: raylib.Texture2D
 PlayerVP := initViewPort(WindowWidth, WindowHeight)
 
 main :: proc() {
-	// for !raylib.IsTextureReady(sunTexture) {}
 	// Setup our array for the Planets
 	loadPlanets("planets.csv")
 
@@ -42,6 +41,8 @@ main :: proc() {
 
 	// Start creation of our window
 	raylib.InitWindow(WindowWidth, WindowHeight, WindowTitle)
+
+	// Must load textures after InitWindow
 	sunSprite = raylib.LoadImage("./sprites/Sun.png")
 	sunTexture = raylib.LoadTextureFromImage(sunSprite)
 	// Max FPS
@@ -141,7 +142,7 @@ drawPlanet :: proc(body: Satellite, vector: raylib.Vector2) {
 
 	// Draw the name of the planet next to the circle
 	raylib.DrawText(
-		fmt.ctprintf("%v : %v", body.Name, r),
+		fmt.ctprintf("%v", body.Name),
 		i32(body.Vector[0] + vector[0] + 10 + r),
 		i32(body.Vector[1] + vector[1] - 10),
 		20,
