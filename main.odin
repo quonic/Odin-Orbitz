@@ -23,10 +23,16 @@ FPS: i32 = 60
 LockToPlanet: bool = false
 SelectedPlanetIndex: i32 = 0
 
+// Textures
+
+sunSprite: raylib.Image
+sunTexture: raylib.Texture2D
+
 // Set our Player View Port
 PlayerVP := initViewPort(WindowWidth, WindowHeight)
 
 main :: proc() {
+	// for !raylib.IsTextureReady(sunTexture) {}
 	// Setup our array for the Planets
 	loadPlanets("planets.csv")
 
@@ -36,6 +42,8 @@ main :: proc() {
 
 	// Start creation of our window
 	raylib.InitWindow(WindowWidth, WindowHeight, WindowTitle)
+	sunSprite = raylib.LoadImage("./sprites/Sun.png")
+	sunTexture = raylib.LoadTextureFromImage(sunSprite)
 	// Max FPS
 	raylib.SetTargetFPS(FPS)
 	// Set our window decorations, in this case removes the title bar
@@ -96,19 +104,44 @@ drawPlanets :: proc() {
 drawPlanet :: proc(body: Satellite, vector: raylib.Vector2) {
 	// Calculate the radius, accounting for Zoom and BodyScale
 	r: f32 = body.Diameter / 2 / Zoom * BodyScale
+	// TODO: Add texture dimentions to Satellite struct
+	// Textures should be 100x100
+	// Calculate the radius, but account for the size of the texture
+	radius: f32 = r / (f32(sunTexture.width) / 2)
 	// Make sure the radius isn't 0 or less than 0.
-	if (r < 1) {r = 1}
+	// if (r < 1) {r = 1}
 	// Draw the planet
-	raylib.DrawCircle(
-		cast(i32)(body.Vector[0] + vector[0]),
-		cast(i32)(body.Vector[1] + vector[1]),
-		r,
-		body.Color,
-	)
+	if (body.Name == "Sun") {
+		when ODIN_DEBUG {
+			raylib.DrawCircle(
+				cast(i32)(body.Vector[0] + vector[0]),
+				cast(i32)(body.Vector[1] + vector[1]),
+				r,
+				body.Color,
+			)
+		}
+		raylib.DrawTextureEx(
+			sunTexture,
+			{
+				body.Vector[0] + vector[0] - radius * f32(sunTexture.width) / 2,
+				body.Vector[1] + vector[1] - radius * f32(sunTexture.height) / 2,
+			},
+			0,
+			radius,
+			raylib.WHITE,
+		)
+	} else {
+		raylib.DrawCircle(
+			cast(i32)(body.Vector[0] + vector[0]),
+			cast(i32)(body.Vector[1] + vector[1]),
+			r,
+			body.Color,
+		)
+	}
 
 	// Draw the name of the planet next to the circle
 	raylib.DrawText(
-		fmt.ctprintf("%v", body.Name),
+		fmt.ctprintf("%v : %v", body.Name, r),
 		i32(body.Vector[0] + vector[0] + 10 + r),
 		i32(body.Vector[1] + vector[1] - 10),
 		20,
