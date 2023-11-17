@@ -22,6 +22,10 @@ Uses data from [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
 * `Right Mouse` to Reset the position and zoom back to defaults
 * `0 to 9` Centers on a planet. 0 = Sun, 3 = Earth. Toggle with `Space Bar`
 
+![Orbitz!](/images/Orbitz.PNG)
+
+![Earth!](/images/Earth.PNG)
+
 ## Setup and Run
 
 Install Odin: <https://odin-lang.org/docs/install/>
