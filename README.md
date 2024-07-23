@@ -36,3 +36,8 @@ Clone this repo.
 Navigate to the root folder of this repo you just cloned.
 
 Run with: `odin run .`
+
+## Bugs
+
+* The camera doesn't center exactly on the planets. Likely due to floating point precision errors. A float 32 is not precise enough to accurately represent the orbits of the planets.
+* Planets jiggle around when zoomed in, only when locked to Uranus and beyond. Likely due to floating point precision errors.
