@@ -9,9 +9,7 @@ import "vendor:raylib"
 WindowWidth: i32 = 1920
 WindowHeight: i32 = 1080
 
-Starting_Zoom: f32 = 100000
-Zoom: f32 = 100000
-BodyScale: f32 = 2
+Starting_Zoom: f32 = 0.0001
 
 WindowTitle: cstring : "Odin Orbitz"
 
@@ -23,13 +21,19 @@ FPS: i32 = 60
 LockToPlanet: bool = false
 SelectedPlanetIndex: i32 = 0
 
+planet_scale: f32 = 10
+
 // Textures
 
 sunSprite: raylib.Image
 sunTexture: raylib.Texture2D
 
-// Set our Player View Port
-PlayerVP := initViewPort(WindowWidth, WindowHeight)
+// Camera
+cameraOffset := raylib.Vector2{cast(f32)WindowWidth / 2, cast(f32)WindowHeight / 2}
+cameraTarget := raylib.Vector2{0, 0}
+cameraRotation: f32 = 0
+cameraZoom: f32 = 0.0001
+camera: raylib.Camera2D
 
 main :: proc() {
 	// Setup our array for the Planets
@@ -41,6 +45,13 @@ main :: proc() {
 
 	// Start creation of our window
 	raylib.InitWindow(WindowWidth, WindowHeight, WindowTitle)
+	SetWindowToCenterMonitor()
+
+	// Set our camera
+	camera.offset = cameraOffset
+	camera.target = cameraTarget
+	camera.rotation = cameraRotation
+	camera.zoom = cameraZoom
 
 	// Must load textures after InitWindow
 	sunSprite = raylib.LoadImage("./sprites/Sun.png")
@@ -59,25 +70,36 @@ main :: proc() {
 	for !raylib.WindowShouldClose() {
 		// Get the frame time from start of loop
 		delta = raylib.GetFrameTime()
-		// Start our drawing
-		raylib.BeginDrawing()
-		// Clear the screen
-		raylib.ClearBackground(raylib.BLACK)
+		{
+			// Start our drawing
+			raylib.BeginDrawing()
+			defer raylib.EndDrawing()
+			// Clear the screen
+			raylib.ClearBackground(raylib.BLACK)
 
-		// Setup our stopwatch for time delta later on
-		delta_time =
-			cast(f32)time.duration_seconds(time.stopwatch_duration(clock)) * TimeMultiplier
-		time.stopwatch_reset(&clock)
-		time.stopwatch_start(&clock)
+			// Setup our stopwatch for time delta later on
+			delta_time =
+				cast(f32)time.duration_seconds(time.stopwatch_duration(clock)) * TimeMultiplier
+			time.stopwatch_reset(&clock)
+			time.stopwatch_start(&clock)
 
-		// Draw our planets
-		drawPlanets()
-		// Draw our HUD
-		drawHud(Zoom, BodyScale)
-		// Check our keys
-		checkButtons()
-		// End of our drawing
-		raylib.EndDrawing()
+			{
+				raylib.BeginMode2D(camera)
+				defer raylib.EndMode2D()
+
+				// Lock view to a planet
+				if (LockToPlanet) {
+					camera.target = Planets[SelectedPlanetIndex].Vector
+				}
+
+				// Draw our planets
+				drawPlanets()
+			}
+			// Draw our HUD
+			drawHud()
+			// Check our keys
+			checkButtons()
+		}
 	}
 	// Exit application
 	raylib.CloseWindow()
@@ -89,22 +111,18 @@ drawPlanets :: proc() {
 		Planets[i].Angle += delta_time / Planets[i].OrbitalPeriod
 		Planets[i].Vector[0] =
 			Planets[Planets[i].Orbiting].Vector[0] +
-			math.cos(Planets[i].Angle) * Planets[i].DistanceFromSun / Zoom / BodyScale
+			math.cos(Planets[i].Angle) * Planets[i].DistanceFromSun
 		Planets[i].Vector[1] =
 			Planets[Planets[i].Orbiting].Vector[1] +
-			math.sin(Planets[i].Angle) * Planets[i].DistanceFromSun / Zoom / BodyScale
-		// Lock view to a planet
-		if (LockToPlanet) {
-			PlayerVP.Position = 0 - Planets[SelectedPlanetIndex].Vector + PlayerVP.Center
-		}
+			math.sin(Planets[i].Angle) * Planets[i].DistanceFromSun
 		// Draw the planet
-		drawPlanet(Planets[i], PlayerVP.Position)
+		drawPlanet(Planets[i])
 	}
 }
 
-drawPlanet :: proc(body: Satellite, vector: raylib.Vector2) {
-	// Calculate the radius, accounting for Zoom and BodyScale
-	r: f32 = body.Diameter / 2 / Zoom * BodyScale
+drawPlanet :: proc(body: Satellite) {
+	// Calculate the radius
+	r: f32 = body.Diameter / 2
 	// TODO: Add texture dimentions to Satellite struct
 	// Textures should be 100x100
 	// Calculate the radius, but account for the size of the texture
@@ -114,53 +132,31 @@ drawPlanet :: proc(body: Satellite, vector: raylib.Vector2) {
 	// Draw the planet
 	if (body.Name == "Sun") {
 		when ODIN_DEBUG {
-			raylib.DrawCircle(
-				cast(i32)(body.Vector[0] + vector[0]),
-				cast(i32)(body.Vector[1] + vector[1]),
-				r,
-				body.Color,
-			)
+			raylib.DrawCircleV(body.Vector, r, body.Color)
 		}
 		raylib.DrawTextureEx(
 			sunTexture,
 			{
-				body.Vector[0] + vector[0] - radius * f32(sunTexture.width) / 2,
-				body.Vector[1] + vector[1] - radius * f32(sunTexture.height) / 2,
+				body.Vector[0] - radius * f32(sunTexture.width) / 2,
+				body.Vector[1] - radius * f32(sunTexture.height) / 2,
 			},
 			0,
 			radius,
 			raylib.WHITE,
 		)
 	} else {
-		raylib.DrawCircle(
-			cast(i32)(body.Vector[0] + vector[0]),
-			cast(i32)(body.Vector[1] + vector[1]),
-			r,
-			body.Color,
-		)
+		raylib.DrawCircleV(body.Vector, r * planet_scale, body.Color)
 	}
-
-	// Draw the name of the planet next to the circle
-	raylib.DrawText(
-		fmt.ctprintf("%v", body.Name),
-		i32(body.Vector[0] + vector[0] + 10 + r),
-		i32(body.Vector[1] + vector[1] - 10),
-		20,
-		raylib.GREEN,
-	)
 }
 
 checkButtons :: proc() {
-	// Disable Lock to Planet when left mouse is pressed.
-	if (raylib.IsMouseButtonDown(raylib.MouseButton.LEFT)) {
-		PlayerVP.Position += raylib.GetMouseDelta()
-		LockToPlanet = false
-	}
 	if (raylib.IsKeyPressed(raylib.KeyboardKey.SPACE)) {
 		if (LockToPlanet) {
 			LockToPlanet = false
+			camera.target = Planets[SelectedPlanetIndex].Vector
 		} else {
 			LockToPlanet = true
+			camera.target = Planets[SelectedPlanetIndex].Vector
 		}
 	}
 	if (raylib.IsKeyDown(raylib.KeyboardKey.ZERO)) {
@@ -193,38 +189,34 @@ checkButtons :: proc() {
 	if (raylib.IsKeyDown(raylib.KeyboardKey.NINE)) {
 		SelectedPlanetIndex = 10
 	}
-	if (raylib.IsKeyDown(raylib.KeyboardKey.MINUS) ||
-		   raylib.IsKeyDown(raylib.KeyboardKey.KP_SUBTRACT) ||
-		   raylib.GetMouseWheelMove() > 0) {
-		Zoom += 1000
+
+	// Translate based on mouse right click
+	if (!LockToPlanet && raylib.IsMouseButtonDown(raylib.MouseButton.RIGHT)) {
+		deltaMouse: raylib.Vector2 = raylib.GetMouseDelta()
+		deltaMouse = deltaMouse * (-1.0 / camera.zoom)
+		camera.target = camera.target + deltaMouse
 	}
-	if (raylib.IsKeyDown(raylib.KeyboardKey.EQUAL) ||
-		   raylib.IsKeyDown(raylib.KeyboardKey.KP_ADD) ||
-		   raylib.GetMouseWheelMove() < 0) {
-		if (Zoom - 1000 < 1000) {
-			Zoom = 1000
-		} else {
-			Zoom -= 1000
+	// Zoom based on mouse wheel
+
+	wheel := raylib.GetMouseWheelMove()
+	if (wheel != 0) {
+		if (!LockToPlanet) {
+			// Get the world point that is under the mouse
+			mouseWorldPos := raylib.GetScreenToWorld2D(raylib.GetMousePosition(), camera)
+
+			// Set the offset to where the mouse is
+			camera.offset = raylib.GetMousePosition()
+
+			// Set the target to match, so that the camera maps the world space point 
+			// under the cursor to the screen space point under the cursor at any zoom
+			camera.target = mouseWorldPos
 		}
+		// Zoom increment
+		scaleFactor: f32 = 1.0 + (0.25 * abs(wheel))
+		if (wheel < 0) {scaleFactor = 1.0 / scaleFactor}
+		camera.zoom = raylib.Clamp(camera.zoom * scaleFactor, 0.0000001, 1)
 	}
-	if (raylib.IsKeyDown(raylib.KeyboardKey.LEFT_BRACKET)) {
-		BodyScale += 0.1
-		if (BodyScale > 6) {
-			BodyScale = 6
-		}
-	}
-	if (raylib.IsKeyDown(raylib.KeyboardKey.RIGHT_BRACKET)) {
-		BodyScale -= 0.1
-		if (BodyScale < 1) {
-			BodyScale = 1
-		}
-	}
-	// Reset our view back to Sun and reset zoom to starting zoom
-	if (raylib.IsMouseButtonPressed(raylib.MouseButton.RIGHT)) {
-		PlayerVP.Position = PlayerVP.Center
-		Zoom = Starting_Zoom
-		LockToPlanet = false
-	}
+
 }
 
 // Unused
