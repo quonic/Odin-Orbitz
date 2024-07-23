@@ -4,23 +4,22 @@ A simple application showcasing drawing circles and text in the Odin language.
 
 Odin Library showcased:
 
-* Reading a csv file, with a little bit of error checking
-* Formating text to add variables to a string
+* Reading a `CSV` file, with a little bit of error checking
+* Formatting text to add variables to a string
 * Converting a string to a float/int
 * Maths for sin, cos, PI
 * Time for Stopwatch
-* Raylib for displaying everything for 2D
+* RayLib for displaying everything for 2D
 
 Uses data from [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
 
 ## Keys
 
 * `ESC` or `Alt+F4` to Quit
-* `-` and `+`/`=` to Zoom
-* `[` and `]` to change the Scaling of orbits and sizes of Planets
-* `Left Mouse + Move` to Move the view around
-* `Right Mouse` to Reset the position and zoom back to defaults
-* `0 to 9` Centers on a planet. 0 = Sun, 3 = Earth. Toggle with `Space Bar`
+* Mouse wheel to Zoom
+* Mouse right click to move around
+* Space Bar to toggle locking to a planet
+* `0` to `9` to center on a planet. when locked to a planet, 0 = Sun, 3 = Earth
 
 ![Orbitz!](/images/Orbitz.PNG)
 
