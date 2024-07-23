@@ -23,13 +23,12 @@ drawHud :: proc() {
 	// Draw the name of the planet next to the circle
 	for i := 0; i < len(Planets); i += 1 {
 		// Draw the name of the planet next to the circle
-		screenPos := raylib.GetWorldToScreen2D(Planets[i].Vector, camera)
 		raylib.DrawTextEx(
 			raylib.GetFontDefault(), // Font
 			fmt.ctprintf("%v", Planets[i].Name), // Text
-			screenPos, // Position
+			raylib.GetWorldToScreen2D(Vector2f64toVector2(Planets[i].Vector), camera), // Position
 			18, // Font size
-			10, // Spacing
+			5, // Spacing
 			raylib.GREEN, // Text color
 		)
 	}

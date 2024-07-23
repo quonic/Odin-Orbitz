@@ -2,6 +2,7 @@ package main
 
 import "core:fmt"
 import "core:math"
+import "core:math/linalg"
 import "core:os"
 import "core:time"
 import "vendor:raylib"
@@ -9,7 +10,7 @@ import "vendor:raylib"
 WindowWidth: i32 = 1920
 WindowHeight: i32 = 1080
 
-Starting_Zoom: f32 = 0.0001
+Starting_Zoom: f32 = 1
 
 WindowTitle: cstring : "Odin Orbitz"
 
@@ -32,7 +33,7 @@ sunTexture: raylib.Texture2D
 cameraOffset := raylib.Vector2{cast(f32)WindowWidth / 2, cast(f32)WindowHeight / 2}
 cameraTarget := raylib.Vector2{0, 0}
 cameraRotation: f32 = 0
-cameraZoom: f32 = 0.0001
+cameraZoom: f32 = 1
 camera: raylib.Camera2D
 
 main :: proc() {
@@ -89,7 +90,7 @@ main :: proc() {
 
 				// Lock view to a planet
 				if (LockToPlanet) {
-					camera.target = Planets[SelectedPlanetIndex].Vector
+					camera.target = Vector2f64toVector2(Planets[SelectedPlanetIndex].Vector)
 				}
 
 				// Draw our planets
@@ -105,58 +106,14 @@ main :: proc() {
 	raylib.CloseWindow()
 }
 
-drawPlanets :: proc() {
-	// Calculate orbits
-	for i := 0; i < len(Planets); i += 1 {
-		Planets[i].Angle += delta_time / Planets[i].OrbitalPeriod
-		Planets[i].Vector[0] =
-			Planets[Planets[i].Orbiting].Vector[0] +
-			math.cos(Planets[i].Angle) * Planets[i].DistanceFromSun
-		Planets[i].Vector[1] =
-			Planets[Planets[i].Orbiting].Vector[1] +
-			math.sin(Planets[i].Angle) * Planets[i].DistanceFromSun
-		// Draw the planet
-		drawPlanet(Planets[i])
-	}
-}
-
-drawPlanet :: proc(body: Satellite) {
-	// Calculate the radius
-	r: f32 = body.Diameter / 2
-	// TODO: Add texture dimentions to Satellite struct
-	// Textures should be 100x100
-	// Calculate the radius, but account for the size of the texture
-	radius: f32 = r / (f32(sunTexture.width) / 2)
-	// Make sure the radius isn't 0 or less than 0.
-	// if (r < 1) {r = 1}
-	// Draw the planet
-	if (body.Name == "Sun") {
-		when ODIN_DEBUG {
-			raylib.DrawCircleV(body.Vector, r, body.Color)
-		}
-		raylib.DrawTextureEx(
-			sunTexture,
-			{
-				body.Vector[0] - radius * f32(sunTexture.width) / 2,
-				body.Vector[1] - radius * f32(sunTexture.height) / 2,
-			},
-			0,
-			radius,
-			raylib.WHITE,
-		)
-	} else {
-		raylib.DrawCircleV(body.Vector, r * planet_scale, body.Color)
-	}
-}
-
 checkButtons :: proc() {
 	if (raylib.IsKeyPressed(raylib.KeyboardKey.SPACE)) {
 		if (LockToPlanet) {
 			LockToPlanet = false
-			camera.target = Planets[SelectedPlanetIndex].Vector
+			camera.target = Vector2f64toVector2(Planets[SelectedPlanetIndex].Vector)
 		} else {
 			LockToPlanet = true
-			camera.target = Planets[SelectedPlanetIndex].Vector
+			camera.target = Vector2f64toVector2(Planets[SelectedPlanetIndex].Vector)
 		}
 	}
 	if (raylib.IsKeyDown(raylib.KeyboardKey.ZERO)) {
