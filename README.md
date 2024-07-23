@@ -19,7 +19,7 @@ Uses data from [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
 * Mouse wheel to Zoom
 * Mouse right click to move around
 * Space Bar to toggle locking to a planet
-* `0` to `9` to center on a planet. when locked to a planet, 0 = Sun, 3 = Earth
+* When locked to a planet `0` to `9` to center on a planet, 0 = Sun, 3 = Earth
 
 ![Orbitz!](/images/Orbitz.PNG)
 
