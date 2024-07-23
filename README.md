@@ -11,7 +11,7 @@ Odin Library showcased:
 * Time for Stopwatch
 * RayLib for displaying everything in 2D
 
-Uses data from [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
+Uses data from [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/) and [NASA Sun facts](https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html).
 
 ## Keys
 
