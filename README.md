@@ -9,7 +9,7 @@ Odin Library showcased:
 * Converting a string to a float/int
 * Maths for sin, cos, PI
 * Time for Stopwatch
-* RayLib for displaying everything for 2D
+* RayLib for displaying everything in 2D
 
 Uses data from [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/).
 
