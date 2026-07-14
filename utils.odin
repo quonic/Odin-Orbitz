@@ -3,8 +3,8 @@ package main
 import "core:math/linalg"
 import "vendor:raylib"
 
-scale32: f32 = 1024 * 2
-scale64: f64 = 1024 * 2
+scale32: f32 = 1024 * 4
+scale64: f64 = 1024 * 4
 
 // Scale a float64 to a float32 so that the maximum value of a float64 can be represented by a float32
 Vector2f64toVector2 :: proc(value: linalg.Vector2f64) -> raylib.Vector2 {

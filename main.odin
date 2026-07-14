@@ -16,13 +16,13 @@ WindowTitle: cstring : "Odin Orbitz"
 
 delta: f32
 delta_time: f32
-TimeMultiplier: f32 = 60
+TimeMultiplier: f32 = 1
 FPS: i32 = 60
 
 LockToPlanet: bool = false
 SelectedPlanetIndex: i32 = 0
 
-planet_scale: f32 = 10
+planet_scale: f32 = 1
 
 // Textures
 
@@ -30,7 +30,7 @@ sunSprite: raylib.Image
 sunTexture: raylib.Texture2D
 
 // Camera
-cameraOffset := raylib.Vector2{cast(f32)WindowWidth / 2, cast(f32)WindowHeight / 2}
+cameraOffset := raylib.Vector2{cast(f32)WindowWidth / 2, cast(f32)WindowHeight / 2} // Center of the screen
 cameraTarget := raylib.Vector2{0, 0}
 cameraRotation: f32 = 0
 cameraZoom: f32 = 1
@@ -171,7 +171,7 @@ checkButtons :: proc() {
 		// Zoom increment
 		scaleFactor: f32 = 1.0 + (0.25 * abs(wheel))
 		if (wheel < 0) {scaleFactor = 1.0 / scaleFactor}
-		camera.zoom = raylib.Clamp(camera.zoom * scaleFactor, 0.0000001, 1)
+		camera.zoom = raylib.Clamp(camera.zoom * scaleFactor, 0.0000001, 5)
 	}
 
 }

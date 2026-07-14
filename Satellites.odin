@@ -37,7 +37,7 @@ Planets: [dynamic]Satellite
 
 loadPlanets :: proc(path: string) {
 	// Read our CSV file
-	data, ok := os.read_entire_file(path)
+	data, ok := os.read_entire_file_from_path(path, context.allocator)
 	defer delete(data)
 	readCsv: csv.Reader
 	ioReader: io.Reader
@@ -52,7 +52,7 @@ loadPlanets :: proc(path: string) {
 
 	// Loop to parse each line
 	for {
-		// Parse new line 
+		// Parse new line
 		PlanetData, err := csv.read(&readCsv)
 
 		if (PlanetData == nil) {
